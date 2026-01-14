@@ -12,6 +12,7 @@ use std::process::Command;
 use url::Url;
 #[cfg(windows)]
 use winreg;
+use curl::easy::SslOpt;
 
 use crate::raw;
 
@@ -481,6 +482,7 @@ pub fn fetch_url(url: &str) -> Result<String> {
     ::download::curl::EASY.with::<_, Result<()>>(|handle| {
         let mut handle = handle.borrow_mut();
         handle.url(url).unwrap();
+        handle.ssl_options(SslOpt::new().no_revoke(true));
         handle.follow_location(true).unwrap();
         let mut transfer = handle.transfer();
         transfer
